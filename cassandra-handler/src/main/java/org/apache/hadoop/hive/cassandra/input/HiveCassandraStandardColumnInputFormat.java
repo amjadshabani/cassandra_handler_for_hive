@@ -49,6 +49,7 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,7 @@ public class HiveCassandraStandardColumnInputFormat extends InputFormat<BytesWri
         org.apache.cassandra.hadoop.ColumnFamilySplit cfSplit = cassandraSplit.getSplit();
         Job job = new Job(jobConf);
 
-        TaskAttemptContext tac = new TaskAttemptContext(job.getConfiguration(), new TaskAttemptID()) {
+        TaskAttemptContext tac = new TaskAttemptContextImpl(job.getConfiguration(), new TaskAttemptID()) {
             @Override
             public void progress() {
                 reporter.progress();
@@ -200,10 +201,11 @@ public class HiveCassandraStandardColumnInputFormat extends InputFormat<BytesWri
         ConfigHelper.setInputSplitSize(jobConf, splitSize);
 
         Job job = new Job(jobConf);
-        JobContext jobContext = new JobContext(job.getConfiguration(), job.getJobID());
 
-        Path[] tablePaths = FileInputFormat.getInputPaths(jobContext);
-        List<org.apache.hadoop.mapreduce.InputSplit> splits = getSplits(jobContext);
+       TaskAttemptContext tac = new TaskAttemptContextImpl(job.getConfiguration(), new TaskAttemptID());
+
+        Path[] tablePaths = FileInputFormat.getInputPaths(tac);
+        List<org.apache.hadoop.mapreduce.InputSplit> splits = getSplits(tac);
         InputSplit[] results = new InputSplit[splits.size()];
 
         for (int i = 0; i < splits.size(); ++i) {
