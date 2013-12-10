@@ -18,8 +18,27 @@
 
 package org.apache.hadoop.hive.cassandra.cql;
 
-import org.apache.cassandra.thrift.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.cassandra.auth.IAuthenticator;
+import org.apache.cassandra.thrift.AuthenticationException;
+import org.apache.cassandra.thrift.AuthenticationRequest;
+import org.apache.cassandra.thrift.AuthorizationException;
+import org.apache.cassandra.thrift.Compression;
+import org.apache.cassandra.thrift.ConsistencyLevel;
+import org.apache.cassandra.thrift.CqlResult;
+import org.apache.cassandra.thrift.CqlRow;
+import org.apache.cassandra.thrift.InvalidRequestException;
+import org.apache.cassandra.thrift.SchemaDisagreementException;
+import org.apache.cassandra.thrift.TimedOutException;
+import org.apache.cassandra.thrift.UnavailableException;
 import org.apache.cassandra.utils.ByteBufferUtil;
+import org.apache.cassandra.utils.Pair;
 import org.apache.hadoop.hive.cassandra.CassandraClientHolder;
 import org.apache.hadoop.hive.cassandra.CassandraException;
 import org.apache.hadoop.hive.cassandra.CassandraProxyClient;
@@ -33,15 +52,13 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-
 /**
  * A class to handle the transaction to cassandra backend database.
  */
 public class CqlManager {
   final static public int DEFAULT_REPLICATION_FACTOR = 1;
   final static public String DEFAULT_STRATEGY = "org.apache.cassandra.locator.SimpleStrategy";
-    private static final Logger logger = LoggerFactory.getLogger(CqlManager.class);
+  private static final Logger logger = LoggerFactory.getLogger(CqlManager.class);
 
     final static Map<String, String> hiveTypeToCqlType = new HashMap<String, String>();
 
@@ -71,6 +88,9 @@ public class CqlManager {
   //key space name
   private String keyspace;
 
+  //credentials
+  private Pair<String,String> cassandraCredentials;
+  
   //column family name
   private String columnFamilyName;
 
@@ -106,6 +126,7 @@ public class CqlManager {
     this.keyspace = getCassandraKeyspace();
     this.columnFamilyName = getCassandraColumnFamily();
     this.framedConnection = true;
+    this.cassandraCredentials = getCassandraCredentials();
   }
 
   /**
@@ -116,8 +137,30 @@ public class CqlManager {
   public void openConnection() throws MetaException {
     try {
       cch = new CassandraProxyClient(host, port, framedConnection, true).getClientHolder();
+      if(cassandraCredentials!=null)
+      {
+          Map<String, String> credentials = new HashMap<String, String>(2);
+          credentials.put(IAuthenticator.USERNAME_KEY, cassandraCredentials.left);
+          credentials.put(IAuthenticator.PASSWORD_KEY, cassandraCredentials.right);    
+          try
+          { cch.getClient().login(new AuthenticationRequest(credentials)); }
+          catch (AuthenticationException e)
+          {
+              logger.error("Authentication exception: invalid username and/or password");
+              throw new IOException(e);
+          }
+          catch (AuthorizationException e)
+          {
+              throw new AssertionError(e); // never actually throws AuthorizationException.
+          }
+      }
+      
     } catch (CassandraException e) {
       throw new MetaException("Unable to connect to the server " + e.getMessage());
+    }
+    catch (Exception e)
+    {
+        throw new AssertionError(e);
     }
   }
 
@@ -234,7 +277,7 @@ public class CqlManager {
    */
   public void createColumnFamily() throws MetaException {
     try {
-      cch.getClient().set_keyspace(keyspace);
+    	cch.getClient().set_keyspace(keyspace);
         Properties properties = MetaStoreUtils.getSchema(tbl);
 
         String columnsStr = (String) properties.get(Constants.META_TABLE_COLUMNS);
@@ -381,6 +424,17 @@ public class CqlManager {
     return tableName;
   }
 
+  /**
+   * Get credentials from the table property.
+   *
+   * @return keyspace name
+   */
+  
+  private Pair<String,String> getCassandraCredentials() {
+	String username = getPropertyFromTable(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_USERNAME);
+	String password = getPropertyFromTable(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_PASSWORD);
+	return username!=null && password!=null ? Pair.create(username,password) : null;
+  }
   /**
    * Get cassandra column family from table property.
    *

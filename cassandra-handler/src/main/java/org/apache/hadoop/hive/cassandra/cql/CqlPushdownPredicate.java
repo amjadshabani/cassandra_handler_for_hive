@@ -20,6 +20,8 @@ package org.apache.hadoop.hive.cassandra.cql;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+
+import org.apache.cassandra.auth.IAuthenticator;
 import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.db.marshal.TypeParser;
 import org.apache.cassandra.exceptions.ConfigurationException;
@@ -52,8 +54,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class CqlPushdownPredicate {
@@ -72,7 +76,8 @@ public class CqlPushdownPredicate {
    *         at the moment, so all other fields are left unset
    * @throws CassandraException if a problem is encountered communicating with Cassandra
    */
-  public static Set<ColumnDef> getIndexedColumns(String host, int port, String ksName, String cfName) throws CassandraException {
+  public static Set<ColumnDef> getIndexedColumns(String host, int port, String ksName, String cfName, 
+		  String username, String password) throws CassandraException {
     String getIdxColTmp = "select column_name, index_name, validator from system.schema_columns " +
             "where keyspace_name='%s' and columnfamily_name = '%s';";
     String getIdxColQuery = String.format(getIdxColTmp, ksName, cfName);
@@ -80,7 +85,16 @@ public class CqlPushdownPredicate {
     Set<ColumnDef> indexedColumns = new HashSet<ColumnDef>();
 
     final CassandraClientHolder client = new CassandraProxyClient(host, port, true, true).getClientHolder();
+    
     try {
+    	
+      if(username!=null && password!=null)
+      {
+      	Map<String, String> credentials = new HashMap<String, String>(2);
+      	credentials.put(IAuthenticator.USERNAME_KEY, username);
+      	credentials.put(IAuthenticator.PASSWORD_KEY, password);    
+        client.getClient().login(new AuthenticationRequest(credentials));
+      }
       CqlResult result = client.getClient().execute_cql3_query(ByteBufferUtil.bytes(getIdxColQuery),
               Compression.NONE, ConsistencyLevel.ONE);
 
@@ -95,19 +109,19 @@ public class CqlPushdownPredicate {
           indexedColumns.add(cd);
         }
       }
-    } catch (InvalidRequestException e) {
+    } catch (InvalidRequestException |  UnavailableException | TimedOutException | SchemaDisagreementException | TException | 
+    		CharacterCodingException e) {
       throw new CassandraException(e);
-    } catch (UnavailableException e) {
-      throw new CassandraException(e);
-    } catch (TimedOutException e) {
-      throw new CassandraException(e);
-    } catch (SchemaDisagreementException e) {
-      throw new CassandraException(e);
-    } catch (TException e) {
-      throw new CassandraException(e);
-    } catch (CharacterCodingException e) {
-      throw new CassandraException(e);
+    } catch (AuthenticationException e)
+    {
+        logger.error("Authentication exception: invalid username and/or password");
+        throw new CassandraException(e);
     }
+    catch (AuthorizationException e)
+    {
+        throw new AssertionError(e); // never actually throws AuthorizationException.
+    }
+
     return indexedColumns;
   }
 

@@ -22,17 +22,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.apache.cassandra.thrift.Cassandra;
-import org.apache.cassandra.thrift.CfDef;
 import org.apache.cassandra.thrift.InvalidRequestException;
-import org.apache.cassandra.thrift.KsDef;
-import org.apache.cassandra.thrift.SchemaDisagreementException;
 import org.apache.cassandra.thrift.TimedOutException;
 import org.apache.cassandra.thrift.TokenRange;
 import org.apache.cassandra.thrift.UnavailableException;
@@ -117,6 +112,7 @@ public class CassandraProxyClient implements java.lang.reflect.InvocationHandler
    */
   public CassandraProxyClient(String host, int port, boolean framed, boolean randomizeConnections)
           throws CassandraException {
+
     this.host = host;
     this.port = port;
     this.lastUsedHost = host;
@@ -181,65 +177,14 @@ public class CassandraProxyClient implements java.lang.reflect.InvocationHandler
    * @throws IOException
    */
   private void initializeConnection() throws CassandraException {
-    clientHolder = createConnection(host);
 
+    clientHolder = createConnection(host);
     if (logger.isDebugEnabled()) {
       logger.debug("Connected to cassandra at " + host + ":" + port);
     }
 
     assert clientHolder.isOpen();
-
-    // Find the first keyspace that's not system and assign it to the lastly used keyspace.
-    try {
-      List<KsDef> allKs = clientHolder.getClient().describe_keyspaces();
-
-      if (allKs.isEmpty() || (allKs.size() == 1 && allKs.get(0).name.equalsIgnoreCase("system"))) {
-        allKs.add(createTmpKs());
-      }
-
-      for (KsDef ks : allKs) {
-        if (!ks.name.equalsIgnoreCase("system")) {
-          ringKs = ks.name;
-          break;
-        }
-      }
-
-      // Set the ring keyspace for initialization purpose. This value
-      // should be overwritten later by set_keyspace
-      clientHolder.setKeyspace(ringKs);
-    } catch (InvalidRequestException e) {
-      throw new CassandraException(e);
-    } catch (TException e) {
-      throw new CassandraException(e);
-    } catch (SchemaDisagreementException e) {
-      throw new CassandraException(e);
-    }
-
-    checkRing();
-  }
-
-  /**
-   * Create a temporary keyspace. This will only be called when there is no keyspace except system
-   * defined on (new cluster).
-   * However we need a keyspace to call describe_ring to get all servers from the ring.
-   *
-   * @return the temporary keyspace
-   * @throws InvalidRequestException     error
-   * @throws TException                  error
-   * @throws SchemaDisagreementException
-   * @throws InterruptedException        error
-   */
-  private KsDef createTmpKs() throws InvalidRequestException, TException, SchemaDisagreementException {
-
-    Map<String, String> stratOpts = new HashMap<String, String>();
-    stratOpts.put("replication_factor", "1");
-
-    KsDef tmpKs = new KsDef("proxy_client_ks", "org.apache.cassandra.locator.SimpleStrategy",
-            Arrays.asList(new CfDef[]{})).setStrategy_options(stratOpts);
-
-    clientHolder.getClient().system_add_keyspace(tmpKs);
-
-    return tmpKs;
+    
   }
 
   /**
@@ -331,13 +276,6 @@ public class CassandraProxyClient implements java.lang.reflect.InvocationHandler
             throw e.getCause();
           }
         } else {
-          String argsList = "";
-          for (Object arg : args) {
-            argsList = arg.toString() + "\n";
-          }
-          //logger.info("SOME UNKNOWN EXCEPTION EXECUTING: \n " + m + " on " + proxy + " with " + argsList);
-          //logger.error(e.getMessage(), e);
-          // The other errors, we should not keep trying.
           throw e.getCause();
         }
       }

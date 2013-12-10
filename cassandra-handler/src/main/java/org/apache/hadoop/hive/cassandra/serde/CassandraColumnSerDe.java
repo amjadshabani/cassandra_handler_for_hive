@@ -128,7 +128,7 @@ public class CassandraColumnSerDe extends AbstractCassandraSerDe {
         cassandraKeyspace = parseCassandraKeyspace(tbl);
         cassandraColumnFamily = parseCassandraColumnFamily(tbl);
         cassandraColumnNames = parseOrCreateColumnMapping(tbl);
-
+        cassandraCredentials = parseCassandraCredentials(tbl);
         cassandraColumnNamesBytes = new ArrayList<BytesWritable>();
         for (String columnName : cassandraColumnNames) {
             cassandraColumnNamesBytes.add(new BytesWritable(columnName.getBytes()));

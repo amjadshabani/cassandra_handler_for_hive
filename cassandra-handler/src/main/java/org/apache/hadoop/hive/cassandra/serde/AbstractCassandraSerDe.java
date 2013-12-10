@@ -18,6 +18,12 @@
 
 package org.apache.hadoop.hive.cassandra.serde;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.SerDeException;
@@ -32,10 +38,6 @@ import org.apache.hadoop.io.Writable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-
 public abstract class AbstractCassandraSerDe implements SerDe{
 
     public static final Logger LOG = LoggerFactory.getLogger(AbstractCassandraSerDe.class);
@@ -44,6 +46,8 @@ public abstract class AbstractCassandraSerDe implements SerDe{
     public static final String CASSANDRA_KEYSPACE_REPFACTOR = "cassandra.ks.repfactor"; //keyspace replication factor
     public static final String CASSANDRA_KEYSPACE_STRATEGY = "cassandra.ks.strategy"; //keyspace replica placement strategy
     public static final String CASSANDRA_KEYSPACE_STRATEGY_OPTIONS = "cassandra.ks.stratOptions";
+    public static final String CASSANDRA_KEYSPACE_USERNAME = "cassandra.ks.username"; // username
+    public static final String CASSANDRA_KEYSPACE_PASSWORD = "cassandra.ks.password"; // password
     public static final String DURABLE_WRITES = "durable.writes";
 
     public static final String CASSANDRA_CF_NAME = "cassandra.cf.name"; // column family
@@ -94,7 +98,8 @@ public abstract class AbstractCassandraSerDe implements SerDe{
     protected ObjectInspector cachedObjectInspector;
     protected LazySimpleSerDe.SerDeParameters serdeParams;
     protected String cassandraKeyspace;
-    protected String cassandraColumnFamily;
+    protected Map<String,String> cassandraCredentials;
+	protected String cassandraColumnFamily;
     protected List<Text> cassandraColumnNamesText;
 
     protected abstract void initCassandraSerDeParameters(Configuration job, Properties tbl, String serdeName)
@@ -169,6 +174,34 @@ public abstract class AbstractCassandraSerDe implements SerDe{
     }
 
     /**
+     * Parse cassandra credentials from table properties.
+     *
+     * @param tbl table properties
+     * @return nothing
+     * @throws nothing
+     */
+    protected Map<String,String> parseCassandraCredentials(Properties tbl) throws SerDeException {
+        String cassandraKeyspaceUsername = tbl.getProperty(CASSANDRA_KEYSPACE_USERNAME);
+        String cassandraKeyspacePassword = tbl.getProperty(CASSANDRA_KEYSPACE_PASSWORD);
+        Map<String,String> credentials = null;
+        if(cassandraKeyspaceUsername!=null)
+        {
+        	credentials = new HashMap<String,String>();
+        	credentials.put(CASSANDRA_KEYSPACE_USERNAME,cassandraKeyspaceUsername);
+        	credentials.put(CASSANDRA_KEYSPACE_PASSWORD,cassandraKeyspacePassword);
+        }
+        return credentials;
+    }
+
+    public String getUsername() {
+    	return cassandraCredentials!=null ? cassandraCredentials.get(CASSANDRA_KEYSPACE_USERNAME) : null;
+    }
+
+    public String getPassword() {
+    	return cassandraCredentials!=null ? cassandraCredentials.get(CASSANDRA_KEYSPACE_PASSWORD) : null;
+    }
+    
+    /**
      * Parse cassandra column family name from table properties.
      *
      * @param tbl table properties
@@ -236,6 +269,13 @@ public abstract class AbstractCassandraSerDe implements SerDe{
         return cassandraKeyspace;
     }
 
+    /**
+     * @return the credentials to use to connect to cassandra as parsed from table properties
+     */
+    public Map<String,String> getCassandraCredentials() {
+		return cassandraCredentials;
+	}
+    
     /**
      * @return the name of the cassandra columnfamily as parsed from table properties
      */

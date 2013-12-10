@@ -114,6 +114,12 @@ public class HiveCqlInputFormat extends InputFormat<MapWritableComparable, MapWr
         ConfigHelper.setInputRange(tac.getConfiguration(), indexExpr);
       }
 
+      String username = jobConf.get(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_USERNAME);
+      String password = jobConf.get(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_PASSWORD);
+      
+      if(username!=null && password!=null)
+    	  ConfigHelper.setInputKeyspaceUserNameAndPassword(tac.getConfiguration(), username, password);
+      
       CqlHiveRecordReader rr = new CqlHiveRecordReader(new CqlPagingRecordReader());
 
       rr.initialize(cfSplit, tac);
@@ -128,8 +134,12 @@ public class HiveCqlInputFormat extends InputFormat<MapWritableComparable, MapWr
 
   @Override
   public InputSplit[] getSplits(JobConf jobConf, int numSplits) throws IOException {
+
     String ks = jobConf.get(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_NAME);
     String cf = jobConf.get(AbstractCassandraSerDe.CASSANDRA_CF_NAME);
+    String username = jobConf.get(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_USERNAME);
+    String password = jobConf.get(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_PASSWORD);
+
     int slicePredicateSize = jobConf.getInt(AbstractCassandraSerDe.CASSANDRA_SLICE_PREDICATE_SIZE,
             AbstractCassandraSerDe.DEFAULT_SLICE_PREDICATE_SIZE);
     int sliceRangeSize = jobConf.getInt(
@@ -160,6 +170,10 @@ public class HiveCqlInputFormat extends InputFormat<MapWritableComparable, MapWr
     ConfigHelper.setInputPartitioner(jobConf, partitioner);
     ConfigHelper.setInputSlicePredicate(jobConf, predicate);
     ConfigHelper.setInputColumnFamily(jobConf, ks, cf);
+    
+    if(username!=null && password!=null)
+    	ConfigHelper.setInputKeyspaceUserNameAndPassword(jobConf, username, password);
+    
     ConfigHelper.setRangeBatchSize(jobConf, sliceRangeSize);
     ConfigHelper.setInputSplitSize(jobConf, splitSize);
 

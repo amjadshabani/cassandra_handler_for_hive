@@ -18,6 +18,12 @@
 
 package org.apache.hadoop.hive.cassandra.cql;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.cassandra.thrift.ColumnDef;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.cassandra.CassandraException;
@@ -47,8 +53,6 @@ import org.apache.hadoop.mapred.OutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-
 public class CqlStorageHandler
         implements HiveStorageHandler, HiveMetaHook, HiveStoragePredicateHandler {
 
@@ -75,6 +79,14 @@ public class CqlStorageHandler
     }
 
     jobProperties.put(AbstractCassandraSerDe.CASSANDRA_CF_NAME, columnFamily);
+
+    String username = tableProperties.getProperty(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_USERNAME);
+    String password = tableProperties.getProperty(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_PASSWORD);
+    if(username!=null && password!=null)
+    {
+    	jobProperties.put(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_USERNAME, username);
+    	jobProperties.put(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_PASSWORD, password);
+    }
 
     //If no column mapping has been configured, we should create the default column mapping.
     String columnInfo = tableProperties.getProperty(AbstractCassandraSerDe.CASSANDRA_COL_MAPPING);
@@ -182,7 +194,8 @@ public class CqlStorageHandler
       jobProperties.put(AbstractCassandraSerDe.CASSANDRA_INDEXED_COLUMNS, indexedColumns);
     } else {
       try {
-        Set<ColumnDef> columns = CqlPushdownPredicate.getIndexedColumns(host, Integer.parseInt(port), keyspace, columnFamily);
+        Set<ColumnDef> columns = CqlPushdownPredicate.getIndexedColumns(host, Integer.parseInt(port), keyspace, columnFamily,
+        		username, password);
         jobProperties.put(AbstractCassandraSerDe.CASSANDRA_INDEXED_COLUMNS, CqlPushdownPredicate.serializeIndexedColumns(columns));
       } catch (CassandraException e) {
         // this results in the property remaining unset on the Jobconf, so indexes will not be used on the C* side
@@ -325,9 +338,9 @@ public class CqlStorageHandler
       CqlSerDe cassandraSerde = (CqlSerDe) deserializer;
       String host = jobConf.get(AbstractCassandraSerDe.CASSANDRA_HOST, AbstractCassandraSerDe.DEFAULT_CASSANDRA_HOST);
       int port = jobConf.getInt(AbstractCassandraSerDe.CASSANDRA_PORT, Integer.parseInt(AbstractCassandraSerDe.DEFAULT_CASSANDRA_PORT));
-      String ksName = cassandraSerde.getCassandraKeyspace();
-      String cfName = cassandraSerde.getCassandraColumnFamily();
-      Set<ColumnDef> indexedColumns = CqlPushdownPredicate.getIndexedColumns(host, port, ksName, cfName);
+      Set<ColumnDef> indexedColumns = CqlPushdownPredicate.getIndexedColumns(host, port, 
+    		  cassandraSerde.getCassandraKeyspace(), cassandraSerde.getCassandraColumnFamily(), 
+    		  cassandraSerde.getUsername(), cassandraSerde.getPassword());
       if (indexedColumns.isEmpty()) {
         return null;
       }

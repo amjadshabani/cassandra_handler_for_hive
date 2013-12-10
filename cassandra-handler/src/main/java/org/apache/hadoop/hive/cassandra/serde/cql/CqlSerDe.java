@@ -117,6 +117,7 @@ public class CqlSerDe extends AbstractCassandraSerDe {
     cassandraKeyspace = parseCassandraKeyspace(tbl);
     cassandraColumnFamily = parseCassandraColumnFamily(tbl);
     cassandraColumnNames = parseOrCreateColumnMapping(tbl);
+    cassandraCredentials = parseCassandraCredentials(tbl); // set credentials if they are available
 
     cassandraColumnNamesText = new ArrayList<Text>();
     for (String columnName : cassandraColumnNames) {

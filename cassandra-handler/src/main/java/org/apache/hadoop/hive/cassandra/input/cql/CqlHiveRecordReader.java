@@ -18,6 +18,10 @@
 
 package org.apache.hadoop.hive.cassandra.input.cql;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Map;
+
 import org.apache.cassandra.hadoop.cql3.CqlPagingRecordReader;
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.hadoop.io.BytesWritable;
@@ -29,27 +33,17 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.Map;
-
 public class CqlHiveRecordReader extends RecordReader<MapWritableComparable, MapWritable>
         implements org.apache.hadoop.mapred.RecordReader<MapWritableComparable, MapWritable> {
 
   static final Logger LOG = LoggerFactory.getLogger(CqlHiveRecordReader.class);
 
-  //private final boolean isTransposed;
   private final CqlPagingRecordReader cfrr;
-  private Iterator<Map.Entry<String, ByteBuffer>> columnIterator = null;
-  private Map.Entry<String, ByteBuffer> currentEntry;
-  //private Iterator<IColumn> subColumnIterator = null;
   private MapWritableComparable currentKey = null;
   private final MapWritable currentValue = new MapWritable();
 
   public CqlHiveRecordReader(CqlPagingRecordReader cprr) { //, boolean isTransposed) {
     this.cfrr = cprr;
-    //this.isTransposed = isTransposed;
   }
 
   @Override
@@ -130,7 +124,6 @@ public class CqlHiveRecordReader extends RecordReader<MapWritableComparable, Map
       // rowKey
       currentValue.putAll(currentKey);
       currentValue.putAll(mapToMapWritable(cfrr.getCurrentValue()));
-      //populateMap(cfrr.getCurrentValue(), currentValue);
     }
 
     return next;
@@ -144,21 +137,4 @@ public class CqlHiveRecordReader extends RecordReader<MapWritableComparable, Map
     return mw;
   }
 
-/*  private void populateMap(Map<Map<String, ByteBuffer>, Map<String, ByteBuffer>> cvalue, MapWritable value) {
-    for (Map.Entry<Map<String, ByteBuffer>, Map<String, ByteBuffer>> e : cvalue.entrySet()) {
-      Map<String, ByteBuffer> k = e.getKey();
-      Map<String, ByteBuffer> v = e.getValue();
-
-
-      if (!v.isLive()) {
-        continue;
-      }
-
-
-      BytesWritable newKey = k);
-      BytesWritable newValue = convertByteBuffer(v.value());
-
-      value.put(newKey, newValue);
-    }
-  } */
 }
