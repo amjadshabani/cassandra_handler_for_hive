@@ -86,7 +86,7 @@ public abstract class AbstractCassandraSerDe implements SerDe{
     public static final int DEFAULT_SLICE_PREDICATE_SIZE = 1000;
     public static final String DEFAULT_CASSANDRA_HOST = "localhost";
     public static final String DEFAULT_CASSANDRA_PORT = "9160";
-    public static final String DEFAULT_CONSISTENCY_LEVEL = "ONE";
+    public static final String DEFAULT_CONSISTENCY_LEVEL = "LOCAL_ONE";
     public static final int DEFAULT_BATCH_MUTATION_SIZE = 500;
     public static final String DELIMITER = ",";
 
