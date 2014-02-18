@@ -132,7 +132,8 @@ public class CqlHiveRecordReader extends RecordReader<MapWritableComparable, Map
   private MapWritableComparable mapToMapWritable(Map<String, ByteBuffer> map) {
     MapWritableComparable mw = new MapWritableComparable();
     for (Map.Entry<String, ByteBuffer> e : map.entrySet()) {
-      mw.put(new Text(e.getKey()), convertByteBuffer(e.getValue()));
+      if(e.getValue()!=null)
+        mw.put(new Text(e.getKey()), convertByteBuffer(e.getValue()));
     }
     return mw;
   }
