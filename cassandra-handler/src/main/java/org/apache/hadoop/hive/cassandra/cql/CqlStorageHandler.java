@@ -34,7 +34,7 @@ import org.apache.hadoop.hive.cassandra.serde.AbstractCassandraSerDe;
 import org.apache.hadoop.hive.cassandra.serde.cql.CqlSerDe;
 import org.apache.hadoop.hive.metastore.HiveMetaHook;
 import org.apache.hadoop.hive.metastore.MetaStoreUtils;
-import org.apache.hadoop.hive.metastore.api.Constants;
+import org.apache.hadoop.hive.metastore.api.hive_metastoreConstants;
 import org.apache.hadoop.hive.metastore.api.MetaException;
 import org.apache.hadoop.hive.metastore.api.Table;
 import org.apache.hadoop.hive.ql.index.IndexPredicateAnalyzer;
@@ -43,6 +43,7 @@ import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.metadata.HiveStorageHandler;
 import org.apache.hadoop.hive.ql.metadata.HiveStoragePredicateHandler;
 import org.apache.hadoop.hive.ql.plan.ExprNodeDesc;
+import org.apache.hadoop.hive.ql.plan.ExprNodeGenericFuncDesc;
 import org.apache.hadoop.hive.ql.plan.TableDesc;
 import org.apache.hadoop.hive.ql.security.authorization.HiveAuthorizationProvider;
 import org.apache.hadoop.hive.serde2.Deserializer;
@@ -61,13 +62,18 @@ public class CqlStorageHandler
   private Configuration configuration;
 
   @Override
+  public void configureJobConf(TableDesc tableDesc, JobConf jobConf) {
+    // No-op added to be compatible with 0.13 API
+  }
+
+  @Override
   public void configureTableJobProperties(TableDesc tableDesc, Map<String, String> jobProperties) {
     Properties tableProperties = tableDesc.getProperties();
 
     //Identify Keyspace
     String keyspace = tableProperties.getProperty(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_NAME);
     if (keyspace == null) {
-      keyspace = tableProperties.getProperty(Constants.META_TABLE_DB);
+      keyspace = tableProperties.getProperty(org.apache.hadoop.hive.metastore.api.hive_metastoreConstants.META_TABLE_DB);
     }
 
     jobProperties.put(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_NAME, keyspace);
@@ -75,7 +81,7 @@ public class CqlStorageHandler
     //Identify ColumnFamily
     String columnFamily = tableProperties.getProperty(AbstractCassandraSerDe.CASSANDRA_CF_NAME);
     if (columnFamily == null) {
-      columnFamily = tableProperties.getProperty(Constants.META_TABLE_NAME);
+      columnFamily = tableProperties.getProperty(org.apache.hadoop.hive.metastore.api.hive_metastoreConstants.META_TABLE_NAME);
     }
 
     jobProperties.put(AbstractCassandraSerDe.CASSANDRA_CF_NAME, columnFamily);
@@ -359,7 +365,7 @@ public class CqlStorageHandler
 
       DecomposedPredicate decomposedPredicate = new DecomposedPredicate();
       decomposedPredicate.pushedPredicate = analyzer.translateSearchConditions(searchConditions);
-      decomposedPredicate.residualPredicate = residualPredicate;
+      decomposedPredicate.residualPredicate = (ExprNodeGenericFuncDesc)residualPredicate;
 
       return decomposedPredicate;
     } catch (CassandraException e) {

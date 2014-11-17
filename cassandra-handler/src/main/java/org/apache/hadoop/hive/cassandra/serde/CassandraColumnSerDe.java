@@ -34,6 +34,7 @@ import org.apache.hadoop.hive.cassandra.input.LazyCassandraRow;
 import org.apache.hadoop.hive.cassandra.output.CassandraPut;
 import org.apache.hadoop.hive.serde.Constants;
 import org.apache.hadoop.hive.serde2.SerDeException;
+import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.LazySimpleStructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
@@ -170,7 +171,7 @@ public class CassandraColumnSerDe extends AbstractCassandraSerDe {
     }
 
     @Override
-    public ObjectInspector createObjectInspector() {
+    public ObjectInspector createObjectInspector() throws SerDeException {
         return CassandraLazyFactory.createLazyStructInspector(
                 serdeParams.getColumnNames(),
                 serdeParams.getColumnTypes(),

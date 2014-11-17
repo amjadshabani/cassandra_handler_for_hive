@@ -158,7 +158,7 @@ public class CqlSerDe extends AbstractCassandraSerDe {
   }
 
   @Override
-  public ObjectInspector createObjectInspector() {
+  public ObjectInspector createObjectInspector() throws SerDeException {
     return CassandraLazyFactory.createLazyStructInspector(
             serdeParams.getColumnNames(),
             serdeParams.getColumnTypes(),

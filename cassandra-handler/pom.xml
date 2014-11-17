@@ -111,7 +111,7 @@
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-serde</artifactId>
-            <version>0.9.0</version>
+            <version>0.13.1</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -119,14 +119,14 @@
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-cli</artifactId>
-            <version>0.9.0</version>
+            <version>0.13.1</version>
             <type>jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-shims</artifactId>
-            <version>0.9.0</version>
+            <version>0.13.1</version>
             <type>jar</type>
             <scope>test</scope>
         </dependency>
@@ -134,14 +134,14 @@
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-exec</artifactId>
-            <version>0.9.0</version>
+            <version>0.13.1</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-metastore</artifactId>
-            <version>0.9.0</version>
+            <version>0.13.1</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

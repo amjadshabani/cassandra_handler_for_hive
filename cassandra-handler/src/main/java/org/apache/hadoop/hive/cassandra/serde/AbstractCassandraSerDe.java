@@ -110,7 +110,7 @@ public abstract class AbstractCassandraSerDe implements SerDe{
      *
      * @return object inspector
      */
-    public abstract ObjectInspector createObjectInspector();
+    public abstract ObjectInspector createObjectInspector() throws SerDeException;
 
     /*
    * Turns obj (a Hive Row) into a cassandra data format.
@@ -159,7 +159,7 @@ public abstract class AbstractCassandraSerDe implements SerDe{
         if (result == null) {
 
             result = tbl
-                    .getProperty(org.apache.hadoop.hive.metastore.api.Constants.META_TABLE_NAME);
+                    .getProperty(org.apache.hadoop.hive.metastore.api.hive_metastoreConstants.META_TABLE_NAME);
 
             if (result == null) {
                 throw new SerDeException("CassandraKeyspace not defined" + tbl.toString());
@@ -215,7 +215,7 @@ public abstract class AbstractCassandraSerDe implements SerDe{
         if (result == null) {
 
             result = tbl
-                    .getProperty(org.apache.hadoop.hive.metastore.api.Constants.META_TABLE_NAME);
+                    .getProperty(org.apache.hadoop.hive.metastore.api.hive_metastoreConstants.META_TABLE_NAME);
 
             if (result == null) {
                 throw new SerDeException("CassandraColumnFamily not defined" + tbl.toString());

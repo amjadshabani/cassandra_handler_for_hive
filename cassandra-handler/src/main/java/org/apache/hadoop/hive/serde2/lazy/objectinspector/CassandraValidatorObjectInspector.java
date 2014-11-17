@@ -23,6 +23,7 @@ import org.apache.hadoop.hive.serde2.lazy.CassandraLazyValidator;
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.AbstractPrimitiveLazyObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorUtils;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.StringObjectInspector;
+import org.apache.hadoop.hive.serde2.typeinfo.TypeInfoFactory;
 import org.apache.hadoop.io.Text;
 
 /**
@@ -36,7 +37,7 @@ public class CassandraValidatorObjectInspector
   private final AbstractType validator;
 
   public CassandraValidatorObjectInspector(AbstractType validator) {
-    super(PrimitiveObjectInspectorUtils.stringTypeEntry);
+    super(TypeInfoFactory.stringTypeInfo);
     this.validator = validator;
   }
 

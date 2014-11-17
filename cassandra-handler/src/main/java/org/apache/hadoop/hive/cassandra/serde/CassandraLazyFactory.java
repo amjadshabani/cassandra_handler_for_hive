@@ -51,6 +51,7 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector.PrimitiveCategory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
+import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.io.Text;
 
 /**
@@ -153,7 +154,7 @@ public class CassandraLazyFactory {
   public static ObjectInspector createLazyStructInspector(
       List<String> columnNames, List<TypeInfo> typeInfos, List<AbstractType> validatorTypes, byte[] separators,
       Text nullSequence, boolean lastColumnTakesRest, boolean escaped,
-      byte escapeChar) {
+      byte escapeChar) throws SerDeException {
 
     if (validatorTypes.size() == 0) {
       return LazyFactory.createLazyStructInspector(columnNames,
