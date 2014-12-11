@@ -129,10 +129,7 @@ public class CassandraManager {
     } catch (TException e) {
       throw new MetaException("An internal exception prevented this action from taking place."
           + e.getMessage());
-    } catch (InvalidRequestException e) {
-      throw new MetaException("An internal exception prevented this action from taking place."
-          + e.getMessage());
-    }
+    } 
   }
 
   /**
@@ -184,13 +181,7 @@ public class CassandraManager {
     } catch (TException e) {
       throw new MetaException("Unable to create key space '" + keyspace + "'. Error:"
           + e.getMessage());
-    } catch (InvalidRequestException e) {
-      throw new MetaException("Unable to create key space '" + keyspace + "'. Error:"
-          + e.getMessage());
-    } catch (SchemaDisagreementException e) {
-      throw new MetaException("Unable to create key space '" + keyspace + "'. Error:"
-          + e.getMessage());
-    }
+    } 
 
   }
 
@@ -221,14 +212,7 @@ public class CassandraManager {
     } catch (TException e) {
       throw new MetaException("Unable to create column family '" + columnFamilyName + "'. Error:"
           + e.getMessage());
-    } catch (InvalidRequestException e) {
-      throw new MetaException("Unable to create column family '" + columnFamilyName + "'. Error:"
-          + e.getMessage());
-    } catch (SchemaDisagreementException e) {
-      throw new MetaException("Unable to create column family '" + columnFamilyName + "'. Error:"
-          + e.getMessage());
-    }
-
+    } 
   }
 
   private String getColumnType() throws MetaException {
@@ -372,13 +356,7 @@ public class CassandraManager {
     } catch (TException e) {
       throw new MetaException("Unable to drop column family '" + columnFamilyName + "'. Error:"
           + e.getMessage());
-    } catch (InvalidRequestException e) {
-      throw new MetaException("Unable to drop column family '" + columnFamilyName + "'. Error:"
-          + e.getMessage());
-    } catch (SchemaDisagreementException e) {
-      throw new MetaException("Unable to drop column family '" + columnFamilyName + "'. Error:"
-          + e.getMessage());
-    }
+    } 
   }
 
 }

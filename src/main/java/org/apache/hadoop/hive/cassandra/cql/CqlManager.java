@@ -256,18 +256,6 @@ public class CqlManager {
       MetaException me = new MetaException(e.getMessage());
       me.setStackTrace(e.getStackTrace());
       throw me;
-    } catch (InvalidRequestException e) {
-      MetaException me = new MetaException(e.getMessage());
-      me.setStackTrace(e.getStackTrace());
-      throw me;
-    } catch (TimedOutException e) {
-      MetaException me = new MetaException(e.getMessage());
-      me.setStackTrace(e.getStackTrace());
-      throw me;
-    } catch (SchemaDisagreementException e) {
-      MetaException me = new MetaException(e.getMessage());
-      me.setStackTrace(e.getStackTrace());
-      throw me;
     }
     return cfExists;
   }
@@ -333,18 +321,6 @@ public class CqlManager {
     } catch (TException e) {
       throw new MetaException("Unable to create column family '" + columnFamilyName + "'. Error:"
               + e.getMessage());
-    } catch (InvalidRequestException e) {
-      throw new MetaException("Unable to create column family '" + columnFamilyName + "'. Error:"
-              + e.getWhy());
-    } catch (SchemaDisagreementException e) {
-      throw new MetaException("Unable to create column family '" + columnFamilyName + "'. Error:"
-              + e.getMessage());
-    } catch (UnavailableException e) {
-        throw new MetaException("Unable to create column family '" + columnFamilyName + "'. Error:"
-                + e.getMessage());
-    } catch (TimedOutException e) {
-        throw new MetaException("Unable to create column family '" + columnFamilyName + "'. Error:"
-                + e.getMessage());
     }
 
   }
@@ -475,12 +451,6 @@ public class CqlManager {
     try {
       cch.getClient().system_drop_column_family(columnFamilyName);
     } catch (TException e) {
-      throw new MetaException("Unable to drop column family '" + columnFamilyName + "'. Error:"
-              + e.getMessage());
-    } catch (InvalidRequestException e) {
-      throw new MetaException("Unable to drop column family '" + columnFamilyName + "'. Error:"
-              + e.getMessage());
-    } catch (SchemaDisagreementException e) {
       throw new MetaException("Unable to drop column family '" + columnFamilyName + "'. Error:"
               + e.getMessage());
     }

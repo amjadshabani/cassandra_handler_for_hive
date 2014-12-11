@@ -59,6 +59,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.thrift.protocol.TBinaryProtocol;
 
 public class CqlPushdownPredicate {
 
@@ -109,9 +110,6 @@ public class CqlPushdownPredicate {
           indexedColumns.add(cd);
         }
       }
-    } catch (InvalidRequestException |  UnavailableException | TimedOutException | SchemaDisagreementException | TException | 
-    		CharacterCodingException e) {
-      throw new CassandraException(e);
     } catch (AuthenticationException e)
     {
         logger.error("Authentication exception: invalid username and/or password");
@@ -120,6 +118,8 @@ public class CqlPushdownPredicate {
     catch (AuthorizationException e)
     {
         throw new AssertionError(e); // never actually throws AuthorizationException.
+    } catch (TException | CharacterCodingException e) {
+      throw new CassandraException(e);
     }
 
     return indexedColumns;

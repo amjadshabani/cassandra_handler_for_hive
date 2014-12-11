@@ -20,7 +20,7 @@ package org.apache.hadoop.hive.serde2.lazy;
 
 import java.nio.ByteBuffer;
 
-import org.apache.cassandra.cql.jdbc.JdbcBoolean;
+import org.apache.cassandra.serializers.BooleanSerializer;
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyBooleanObjectInspector;
 
 /**
@@ -39,7 +39,7 @@ public class CassandraLazyBoolean extends LazyBoolean
     if ( length == 1 ) {
       try {
         ByteBuffer buf = ByteBuffer.wrap(bytes.getData(), start, length);
-        data.set(JdbcBoolean.instance.compose(buf));
+        data.set(BooleanSerializer.instance.deserialize(buf));
         isNull = false;
         return;
       } catch (Throwable ie) {

@@ -139,16 +139,8 @@ public class CqlPut extends CassandraAbstractPut implements Writable {
           client.getProxyConnection().set_keyspace(keySpace);
           CqlPreparedResult result = client.getProxyConnection().prepare_cql3_query(ByteBufferUtil.bytes(queryBuilder.toString()), Compression.NONE);
           client.getProxyConnection().execute_prepared_cql3_query(result.itemId, values, flevel);
-      } catch (InvalidRequestException e) {
-          throw new IOException(e);
       } catch (TException e) {
           throw new IOException(e);
-      } catch (UnavailableException e) {
-          throw new IOException(e);
-      } catch (TimedOutException e) {
-          throw new IOException(e);
-      } catch (SchemaDisagreementException e) {
-          throw new IOException(e);
-      }
+      } 
   }
 }
