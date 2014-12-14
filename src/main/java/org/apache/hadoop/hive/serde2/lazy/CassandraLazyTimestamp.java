@@ -18,10 +18,10 @@
 
 package org.apache.hadoop.hive.serde2.lazy;
 
+import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyTimestampObjectInspector;
+
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
-
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyTimestampObjectInspector;
 
 /**
  * CassandraLazyTimestamp parses the object into TimestampWritable value.

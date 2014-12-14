@@ -20,7 +20,6 @@ package org.apache.hadoop.hive.cassandra.cql;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-
 import org.apache.cassandra.auth.IAuthenticator;
 import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.db.marshal.TypeParser;
@@ -47,19 +46,14 @@ import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.apache.thrift.protocol.TBinaryProtocol;
+import java.util.*;
 
 public class CqlPushdownPredicate {
 

@@ -18,6 +18,12 @@
 
 package org.apache.hadoop.hive.cassandra.output;
 
+import org.apache.cassandra.thrift.*;
+import org.apache.cassandra.utils.ByteBufferUtil;
+import org.apache.hadoop.hive.cassandra.CassandraProxyClient;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapred.JobConf;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -26,16 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.cassandra.thrift.Column;
-import org.apache.cassandra.thrift.ColumnOrSuperColumn;
-import org.apache.cassandra.thrift.ConsistencyLevel;
-import org.apache.cassandra.thrift.Mutation;
-import org.apache.cassandra.thrift.SuperColumn;
-import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.hadoop.hive.cassandra.CassandraProxyClient;
-import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapred.JobConf;
 
 /**
  * This represents the super column family in Cassandra.

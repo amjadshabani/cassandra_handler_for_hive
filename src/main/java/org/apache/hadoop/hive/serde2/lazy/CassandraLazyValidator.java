@@ -18,11 +18,11 @@
 
 package org.apache.hadoop.hive.serde2.lazy;
 
-import java.nio.ByteBuffer;
-
 import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.CassandraValidatorObjectInspector;
 import org.apache.hadoop.io.Text;
+
+import java.nio.ByteBuffer;
 
 //Converts everything to string, via the Cassandra validator
 public class CassandraLazyValidator extends

@@ -18,10 +18,10 @@
 
 package org.apache.hadoop.hive.serde2.lazy;
 
-import java.nio.ByteBuffer;
-
 import org.apache.cassandra.db.marshal.FloatType;
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyFloatObjectInspector;
+
+import java.nio.ByteBuffer;
 
 /**
  * CassandraLazyFloat parses the object into FloatWritable value.

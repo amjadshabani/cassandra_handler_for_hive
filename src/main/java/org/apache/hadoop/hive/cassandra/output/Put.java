@@ -18,10 +18,10 @@
 
 package org.apache.hadoop.hive.cassandra.output;
 
-import java.io.IOException;
-
 import org.apache.hadoop.hive.cassandra.CassandraProxyClient;
 import org.apache.hadoop.mapred.JobConf;
+
+import java.io.IOException;
 
 public interface Put {
   /**

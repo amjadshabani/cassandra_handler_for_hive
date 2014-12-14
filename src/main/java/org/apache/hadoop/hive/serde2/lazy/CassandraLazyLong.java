@@ -18,9 +18,9 @@
 
 package org.apache.hadoop.hive.serde2.lazy;
 
-import java.nio.ByteBuffer;
-
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyLongObjectInspector;
+
+import java.nio.ByteBuffer;
 
 /**
  * CassandraLazyLong parses the object into LongWritable value.

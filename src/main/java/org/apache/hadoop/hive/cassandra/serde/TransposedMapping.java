@@ -18,10 +18,6 @@
 
 package org.apache.hadoop.hive.cassandra.serde;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.List;
-
 import org.apache.hadoop.hive.cassandra.output.CassandraColumn;
 import org.apache.hadoop.hive.cassandra.output.CassandraPut;
 import org.apache.hadoop.hive.cassandra.output.CassandraSuperPut;
@@ -29,6 +25,10 @@ import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe.SerDeParameters;
 import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.io.Writable;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.List;
 
 public class TransposedMapping extends TableMapping {
   /* Track the index of :column, :subcolumn, and :value. This would only be set when it is a transposed table*/

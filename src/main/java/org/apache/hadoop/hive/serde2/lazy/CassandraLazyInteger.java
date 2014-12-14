@@ -18,9 +18,9 @@
 
 package org.apache.hadoop.hive.serde2.lazy;
 
-import java.nio.ByteBuffer;
-
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyIntObjectInspector;
+
+import java.nio.ByteBuffer;
 
 /**
  * CassandraLazyInteger parses the object into LongInteger value.

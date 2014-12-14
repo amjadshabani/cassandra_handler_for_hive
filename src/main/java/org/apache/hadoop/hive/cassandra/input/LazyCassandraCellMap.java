@@ -18,14 +18,14 @@
 
 package org.apache.hadoop.hive.cassandra.input;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.cassandra.hadoop.ColumnFamilyRecordReader;
 import org.apache.hadoop.hive.serde2.lazy.LazyMap;
 import org.apache.hadoop.hive.serde2.lazy.LazyObject;
 import org.apache.hadoop.hive.serde2.lazy.LazyPrimitive;
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.LazyMapObjectInspector;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class LazyCassandraCellMap extends LazyMap{
 

@@ -18,9 +18,9 @@
 
 package org.apache.hadoop.hive.serde2.lazy;
 
-import java.nio.ByteBuffer;
-
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyDoubleObjectInspector;
+
+import java.nio.ByteBuffer;
 
 /**
  * CassandraLazyDouble parses the object into DoubleWritable value.

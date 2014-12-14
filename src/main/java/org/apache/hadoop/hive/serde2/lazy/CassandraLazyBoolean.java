@@ -18,10 +18,10 @@
 
 package org.apache.hadoop.hive.serde2.lazy;
 
-import java.nio.ByteBuffer;
-
 import org.apache.cassandra.serializers.BooleanSerializer;
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyBooleanObjectInspector;
+
+import java.nio.ByteBuffer;
 
 /**
  * CassandraLazyLong parses the object into BooleanWritable value.

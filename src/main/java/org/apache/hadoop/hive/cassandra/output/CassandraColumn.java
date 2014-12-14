@@ -18,11 +18,11 @@
 
 package org.apache.hadoop.hive.cassandra.output;
 
+import org.apache.hadoop.io.Writable;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
-import org.apache.hadoop.io.Writable;
 
 /**
  * This represents a cassandra column.

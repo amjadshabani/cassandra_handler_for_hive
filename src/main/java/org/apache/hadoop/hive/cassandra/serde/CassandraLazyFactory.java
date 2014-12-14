@@ -18,41 +18,20 @@
 
 package org.apache.hadoop.hive.cassandra.serde;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.cassandra.db.marshal.AbstractType;
-import org.apache.hadoop.hive.serde2.lazy.CassandraLazyBinary;
-import org.apache.hadoop.hive.serde2.lazy.CassandraLazyBoolean;
-import org.apache.hadoop.hive.serde2.lazy.CassandraLazyDouble;
-import org.apache.hadoop.hive.serde2.lazy.CassandraLazyFloat;
-import org.apache.hadoop.hive.serde2.lazy.CassandraLazyInteger;
-import org.apache.hadoop.hive.serde2.lazy.CassandraLazyLong;
-import org.apache.hadoop.hive.serde2.lazy.CassandraLazyTimestamp;
-import org.apache.hadoop.hive.serde2.lazy.CassandraLazyValidator;
-import org.apache.hadoop.hive.serde2.lazy.LazyByte;
-import org.apache.hadoop.hive.serde2.lazy.LazyFactory;
-import org.apache.hadoop.hive.serde2.lazy.LazyObject;
-import org.apache.hadoop.hive.serde2.lazy.LazyShort;
-import org.apache.hadoop.hive.serde2.lazy.LazyString;
+import org.apache.hadoop.hive.serde2.SerDeException;
+import org.apache.hadoop.hive.serde2.lazy.*;
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.CassandraValidatorObjectInspector;
 import org.apache.hadoop.hive.serde2.lazy.objectinspector.LazyObjectInspectorFactory;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyBinaryObjectInspector;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyBooleanObjectInspector;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyByteObjectInspector;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyDoubleObjectInspector;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyFloatObjectInspector;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyIntObjectInspector;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyLongObjectInspector;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyShortObjectInspector;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyStringObjectInspector;
-import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.LazyTimestampObjectInspector;
+import org.apache.hadoop.hive.serde2.lazy.objectinspector.primitive.*;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector.PrimitiveCategory;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
-import org.apache.hadoop.hive.serde2.SerDeException;
 import org.apache.hadoop.io.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A LazyFactory class used by cassandra integration into Hive.

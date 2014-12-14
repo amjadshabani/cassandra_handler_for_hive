@@ -18,14 +18,14 @@
 
 package org.apache.hadoop.hive.cassandra.input;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
 import org.apache.cassandra.hadoop.ColumnFamilySplit;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.FileSplit;
 import org.apache.hadoop.mapred.InputSplit;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 
 @SuppressWarnings("deprecation")
 public class HiveCassandraStandardSplit extends FileSplit implements InputSplit{

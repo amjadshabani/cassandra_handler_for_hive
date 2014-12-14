@@ -18,8 +18,6 @@
 
 package org.apache.hadoop.hive.cassandra.ql.udf;
 
-import java.math.BigInteger;
-
 import org.apache.cassandra.db.marshal.IntegerType;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDF;
@@ -28,6 +26,8 @@ import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+
+import java.math.BigInteger;
 
 @UDFType(deterministic = true)
 @Description(name = "to_varint",

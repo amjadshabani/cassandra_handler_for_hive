@@ -20,8 +20,9 @@ package org.apache.hadoop.hive.cassandra.input.cql;
 
 import org.apache.cassandra.hadoop.ColumnFamilySplit;
 import org.apache.cassandra.hadoop.ConfigHelper;
-import org.apache.cassandra.hadoop.cql3.CqlPagingInputFormat;
-import org.apache.cassandra.hadoop.cql3.CqlPagingRecordReader;
+import org.apache.cassandra.hadoop.cql3.CqlConfigHelper;
+import org.apache.cassandra.hadoop.cql3.CqlInputFormat;
+import org.apache.cassandra.hadoop.cql3.CqlRecordReader;
 import org.apache.cassandra.thrift.ColumnDef;
 import org.apache.cassandra.thrift.IndexExpression;
 import org.apache.cassandra.thrift.SlicePredicate;
@@ -40,13 +41,14 @@ import org.apache.hadoop.hive.ql.plan.ExprNodeDesc;
 import org.apache.hadoop.hive.ql.plan.TableScanDesc;
 import org.apache.hadoop.hive.serde2.ColumnProjectionUtils;
 import org.apache.hadoop.io.MapWritable;
+import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,15 +59,15 @@ import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings("deprecation")
-public class HiveCqlInputFormat extends InputFormat<MapWritableComparable, MapWritable>
-        implements org.apache.hadoop.mapred.InputFormat<MapWritableComparable, MapWritable> {
+public class HiveCqlInputFormat extends InputFormat<VLongWritable, MapWritable>
+        implements org.apache.hadoop.mapred.InputFormat<VLongWritable, MapWritable> {
 
   static final Logger LOG = LoggerFactory.getLogger(HiveCqlInputFormat.class);
 
-  private final CqlPagingInputFormat cfif = new CqlPagingInputFormat();
+  private final CqlInputFormat cfif = new CqlInputFormat();
 
   @Override
-  public RecordReader<MapWritableComparable, MapWritable> getRecordReader(InputSplit split,
+  public RecordReader<VLongWritable, MapWritable> getRecordReader(InputSplit split,
                                                                 JobConf jobConf, final Reporter reporter) throws IOException {
     HiveCassandraStandardSplit cassandraSplit = (HiveCassandraStandardSplit) split;
 
@@ -117,10 +119,13 @@ public class HiveCqlInputFormat extends InputFormat<MapWritableComparable, MapWr
       String username = jobConf.get(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_USERNAME);
       String password = jobConf.get(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_PASSWORD);
       
-      if(username!=null && password!=null)
-    	  ConfigHelper.setInputKeyspaceUserNameAndPassword(tac.getConfiguration(), username, password);
+      if(username!=null && password!=null) {
+        //ConfigHelper.setInputKeyspaceUserNameAndPassword(tac.getConfiguration(), username, password);
+        CqlConfigHelper.setUserNameAndPassword(tac.getConfiguration(), username, password);
+      }
+
       
-      CqlHiveRecordReader rr = new CqlHiveRecordReader(new CqlPagingRecordReader());
+      CqlHiveRecordReader rr = new CqlHiveRecordReader(new CqlRecordReader());
 
       rr.initialize(cfSplit, tac);
 
@@ -170,11 +175,13 @@ public class HiveCqlInputFormat extends InputFormat<MapWritableComparable, MapWr
     ConfigHelper.setInputPartitioner(jobConf, partitioner);
     ConfigHelper.setInputSlicePredicate(jobConf, predicate);
     ConfigHelper.setInputColumnFamily(jobConf, ks, cf);
-    
-    if(username!=null && password!=null)
-    	ConfigHelper.setInputKeyspaceUserNameAndPassword(jobConf, username, password);
-    
-    ConfigHelper.setRangeBatchSize(jobConf, sliceRangeSize);
+
+    if(username!=null && password!=null) {
+      //ConfigHelper.setInputKeyspaceUserNameAndPassword(jobConf, username, password);
+      CqlConfigHelper.setUserNameAndPassword(jobConf, username, password);
+    }
+
+      ConfigHelper.setRangeBatchSize(jobConf, sliceRangeSize);
     ConfigHelper.setInputSplitSize(jobConf, splitSize);
 
     Job job = new Job(jobConf);
@@ -231,11 +238,11 @@ public class HiveCqlInputFormat extends InputFormat<MapWritableComparable, MapWr
 
 
   @Override
-  public org.apache.hadoop.mapreduce.RecordReader<MapWritableComparable, MapWritable> createRecordReader(
+  public org.apache.hadoop.mapreduce.RecordReader<VLongWritable, MapWritable> createRecordReader(
           org.apache.hadoop.mapreduce.InputSplit arg0, TaskAttemptContext tac) throws IOException,
           InterruptedException {
 
-    return new CqlHiveRecordReader(new CqlPagingRecordReader());
+    return new CqlHiveRecordReader(new CqlRecordReader());
   }
 
   /**

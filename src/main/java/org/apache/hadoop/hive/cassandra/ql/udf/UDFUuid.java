@@ -18,14 +18,14 @@
 
 package org.apache.hadoop.hive.cassandra.ql.udf;
 
-import java.util.UUID;
-
 import org.apache.cassandra.utils.UUIDGen;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDF;
 import org.apache.hadoop.hive.ql.udf.UDFType;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
+
+import java.util.UUID;
 
 @UDFType(deterministic = true)
 @Description(name = "to_uuid",
