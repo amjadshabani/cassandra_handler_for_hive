@@ -119,11 +119,8 @@ public class HiveCqlInputFormat extends InputFormat<VLongWritable, MapWritable>
       String username = jobConf.get(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_USERNAME);
       String password = jobConf.get(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_PASSWORD);
       
-      if(username!=null && password!=null) {
-        //ConfigHelper.setInputKeyspaceUserNameAndPassword(tac.getConfiguration(), username, password);
+      if(username!=null && password!=null)
         CqlConfigHelper.setUserNameAndPassword(tac.getConfiguration(), username, password);
-      }
-
       
       CqlHiveRecordReader rr = new CqlHiveRecordReader(new CqlRecordReader());
 
@@ -176,10 +173,8 @@ public class HiveCqlInputFormat extends InputFormat<VLongWritable, MapWritable>
     ConfigHelper.setInputSlicePredicate(jobConf, predicate);
     ConfigHelper.setInputColumnFamily(jobConf, ks, cf);
 
-    if(username!=null && password!=null) {
-      //ConfigHelper.setInputKeyspaceUserNameAndPassword(jobConf, username, password);
+    if(username!=null && password!=null)
       CqlConfigHelper.setUserNameAndPassword(jobConf, username, password);
-    }
 
       ConfigHelper.setRangeBatchSize(jobConf, sliceRangeSize);
     ConfigHelper.setInputSplitSize(jobConf, splitSize);

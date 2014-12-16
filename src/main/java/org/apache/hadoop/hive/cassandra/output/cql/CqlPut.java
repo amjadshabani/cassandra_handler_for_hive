@@ -18,7 +18,9 @@
 
 package org.apache.hadoop.hive.cassandra.output.cql;
 
-import org.apache.cassandra.thrift.*;
+import org.apache.cassandra.thrift.Compression;
+import org.apache.cassandra.thrift.ConsistencyLevel;
+import org.apache.cassandra.thrift.CqlPreparedResult;
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.hadoop.hive.cassandra.CassandraProxyClient;
 import org.apache.hadoop.hive.cassandra.output.CassandraAbstractPut;

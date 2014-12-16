@@ -18,7 +18,9 @@
 
 package org.apache.hadoop.hive.cassandra;
 
-import org.apache.cassandra.thrift.*;
+import org.apache.cassandra.thrift.CfDef;
+import org.apache.cassandra.thrift.KsDef;
+import org.apache.cassandra.thrift.NotFoundException;
 import org.apache.hadoop.hive.cassandra.serde.AbstractCassandraSerDe;
 import org.apache.hadoop.hive.cassandra.serde.CassandraColumnSerDe;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;

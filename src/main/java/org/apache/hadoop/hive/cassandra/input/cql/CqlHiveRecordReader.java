@@ -73,8 +73,6 @@ public class CqlHiveRecordReader extends RecordReader<VLongWritable, MapWritable
     return crr.getProgress();
   }
 
-  public static int callCount = 0;
-
   @Override
   public boolean next(VLongWritable key, MapWritable value) throws IOException {
     if (!nextKeyValue())
@@ -114,14 +112,5 @@ public class CqlHiveRecordReader extends RecordReader<VLongWritable, MapWritable
   public boolean nextKeyValue() throws IOException {
     return crr.nextKeyValue();
   }
-
-  private MapWritableComparable mapToMapWritable(Map<String, ByteBuffer> map) {
-    MapWritableComparable mw = new MapWritableComparable();
-    for (Map.Entry<String, ByteBuffer> e : map.entrySet()) {
-      if(e.getValue()!=null)
-        mw.put(new Text(e.getKey()), convertByteBuffer(e.getValue()));
-    }
-    return mw;
-  }
-
+  
 }
