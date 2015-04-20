@@ -18,6 +18,7 @@
 
 package org.apache.hadoop.hive.cassandra.cql;
 
+import org.apache.cassandra.hadoop.cql3.CqlConfigHelper;
 import org.apache.cassandra.thrift.ColumnDef;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.cassandra.CassandraException;
@@ -64,6 +65,32 @@ public class CqlStorageHandler
   @Override
   public void configureTableJobProperties(TableDesc tableDesc, Map<String, String> jobProperties) {
     Properties tableProperties = tableDesc.getProperties();
+    
+    //HardCoing the datastax driver properties
+/*    71     private static final String INPUT_NATIVE_PORT = "cassandra.input.native.port";
+    72     private static final String INPUT_NATIVE_CORE_CONNECTIONS_PER_HOST = "cassandra.input.native.core.connections.per.host";
+    73     private static final String INPUT_NATIVE_MAX_CONNECTIONS_PER_HOST = "cassandra.input.native.max.connections.per.host";
+    74     private static final String INPUT_NATIVE_MIN_SIMULT_REQ_PER_CONNECTION = "cassandra.input.native.min.simult.reqs.per.connection"; 
+    75     private static final String INPUT_NATIVE_MAX_SIMULT_REQ_PER_CONNECTION = "cassandra.input.native.max.simult.reqs.per.connection";
+    76     private static final String INPUT_NATIVE_CONNECTION_TIMEOUT = "cassandra.input.native.connection.timeout";
+    77     private static final String INPUT_NATIVE_READ_CONNECTION_TIMEOUT = "cassandra.input.native.read.connection.timeout";
+    78     private static final String INPUT_NATIVE_RECEIVE_BUFFER_SIZE = "cassandra.input.native.receive.buffer.size";
+    79     private static final String INPUT_NATIVE_SEND_BUFFER_SIZE = "cassandra.input.native.send.buffer.size";
+    80     private static final String INPUT_NATIVE_SOLINGER = "cassandra.input.native.solinger";
+    81     private static final String INPUT_NATIVE_TCP_NODELAY = "cassandra.input.native.tcp.nodelay";
+    82     private static final String INPUT_NATIVE_REUSE_ADDRESS = "cassandra.input.native.reuse.address";
+    83     private static final String INPUT_NATIVE_KEEP_ALIVE = "cassandra.input.native.keep.alive";
+    84     private static final String INPUT_NATIVE_AUTH_PROVIDER = "cassandra.input.native.auth.provider";
+    85     private static final String INPUT_NATIVE_SSL_TRUST_STORE_PATH = "cassandra.input.native.ssl.trust.store.path";
+    86     private static final String INPUT_NATIVE_SSL_KEY_STORE_PATH = "cassandra.input.native.ssl.key.store.path";
+    87     private static final String INPUT_NATIVE_SSL_TRUST_STORE_PASSWARD = "cassandra.input.native.ssl.trust.store.password";
+    88     private static final String INPUT_NATIVE_SSL_KEY_STORE_PASSWARD = "cassandra.input.native.ssl.key.store.password";
+    89     private static final String INPUT_NATIVE_SSL_CIPHER_SUITES = "cassandra.input.native.ssl.cipher.suites";
+*/
+    jobProperties.put("cassandra.input.native.max.connections.per.host", "200");
+//    jobProperties.put("cassandra.input.native.read.connection.timeout", "15000");
+//    jobProperties.put("cassandra.input.native.connection.timeout", "15000");
+    
 
     //Identify Keyspace
     String keyspace = tableProperties.getProperty(AbstractCassandraSerDe.CASSANDRA_KEYSPACE_NAME);
