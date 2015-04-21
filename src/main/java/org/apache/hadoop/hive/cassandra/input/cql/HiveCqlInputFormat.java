@@ -108,6 +108,10 @@ public class HiveCqlInputFormat extends InputFormat<VLongWritable, MapWritable>
       ConfigHelper.setInputPartitioner(tac.getConfiguration(), cassandraSplit.getPartitioner());
       // Set Split Size
       ConfigHelper.setInputSplitSize(tac.getConfiguration(), cassandraSplit.getSplitSize());
+      
+      //Adding native properties
+      CqlConfigHelper.setInputMaxConnections(tac.getConfiguration(), 200 +"");
+      CqlConfigHelper.setInputCoreConnections(tac.getConfiguration(), 200 +"");
 
       LOG.info("Validators : " + tac.getConfiguration().get(CassandraColumnSerDe.CASSANDRA_VALIDATOR_TYPE));
       List<IndexExpression> indexExpr = parseFilterPredicate(jobConf);
