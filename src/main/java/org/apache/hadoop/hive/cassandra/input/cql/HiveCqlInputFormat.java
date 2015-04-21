@@ -111,7 +111,7 @@ public class HiveCqlInputFormat extends InputFormat<VLongWritable, MapWritable>
       
       //Adding native properties
 	  CqlConfigHelper.setInputMaxSimultReqPerConnections(tac.getConfiguration(),2048 + "");
-	  CqlConfigHelper.setInputMinSimultReqPerConnections(tac.getConfiguration(),1024 + "")
+	  CqlConfigHelper.setInputMinSimultReqPerConnections(tac.getConfiguration(),1024 + "");
 //      CqlConfigHelper.setInputCoreConnections(tac.getConfiguration(), 200 +"");
       CqlConfigHelper.setInputMaxConnections(tac.getConfiguration(), 200 +"");
 
